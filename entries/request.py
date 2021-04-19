@@ -38,7 +38,7 @@ def delete_entry(id):
     # this is a string
     # >>> print("""this is a string
     # ... his is a hot""")
-    # thsi is a string
+    # this is a string
     # this is a hot
         db_cursor.execute("""
         DELETE FROM JournalEntries
