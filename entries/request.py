@@ -141,7 +141,7 @@ def get_single_entry(id):
             e.date,
             e.concept,
             e.entry,
-            e.moodId
+            e.mood
         FROM JournalEntries e
         WHERE e.id = ?
         """, ( id, ))
@@ -151,6 +151,6 @@ def get_single_entry(id):
 
         # Create an entry instance from the current row
         entry = Entry(data['id'], data['date'], data['concept'],
-                            data['entry'], data['moodId'])
+                            data['entry'], data['mood'])
 
         return json.dumps(entry.__dict__)
