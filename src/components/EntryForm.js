@@ -1,17 +1,23 @@
 import React, { useContext, useState, useEffect } from "react"
 import { EntryContext } from "./EntryProvider"
 import { MoodContext } from "./mood/MoodProvider"
+import { TagContext } from "./tag/TagProvider"
 
 
 export const EntryForm = (props) => {
+    
     const { addEntry, updateEntry, entry, setEntry } = useContext(EntryContext)
-    const { moods, getMoods } = useContext(MoodContext)
-
-    const [editMode, editModeChanged] = useState(false)
+    
+    const { moods, getMoods } = useContext(MoodContext);
+    const { tags, getTags } = useContext(TagContext);
+    const [tagSelected, setTagSelected ] = useState("");
+    const [editMode, editModeChanged] = useState(false);
 
     useEffect(() => {
         getMoods()
+        .then(getTags)
     }, [])
+
 
     useEffect(() => {
         if ('id' in entry) {
@@ -99,7 +105,18 @@ export const EntryForm = (props) => {
                     
                 </div>
             </fieldset>
-            <button type="submit"
+            {
+        tags.map(tag => {
+          return <>
+          <label>Please Select a Tag:</label>
+            <input type="radio" value={tag.id} name="tag_id"
+              onChange={handleControlledInputChange}
+            /> {tag.name}
+          </>
+        })
+      }
+         <div>
+                <button type="submit"
                 onClick={evt => {
                     evt.preventDefault()
                     constructNewEntry()
@@ -107,6 +124,7 @@ export const EntryForm = (props) => {
                 className="btn btn-primary">
                 {editMode ? "Update" : "Save"}
             </button>
+            </div>
         </form>
     )
 }
