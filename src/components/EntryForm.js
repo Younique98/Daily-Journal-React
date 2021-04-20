@@ -60,7 +60,7 @@ export const EntryForm = (props) => {
             <h2 className="EntryForm__title">{editMode ? "Update Entry" : "Create Entry"}</h2>
             <fieldset>
                 <div className="form-group">
-                    <label htmlFor="concept">Concept: </label>
+                    <label htmlFor="concept">Todays Journal Concept: </label>
                     <input type="text" name="concept" required autoFocus className="form-control"
                         proptype="varchar"
                         placeholder="Concept"
@@ -71,7 +71,7 @@ export const EntryForm = (props) => {
             </fieldset>
             <fieldset>
                 <div className="form-group">
-                    <label htmlFor="entry">Entry: </label>
+                    <label htmlFor="entry">Enter Your THoughts - Today's Entry: </label>
                     <input type="text" name="entry" required className="form-control"
                         proptype="varchar"
                         placeholder="Entry"
@@ -82,7 +82,7 @@ export const EntryForm = (props) => {
             </fieldset>
             <fieldset>
                 <div className="form-group">
-                    <label htmlFor="moodId">Mood: </label>
+                    <label htmlFor="moodId">Select Your Mood: </label>
                     <select name="moodId" className="form-control"
                         proptype="int"
                         value={entry.moodId}
@@ -94,7 +94,9 @@ export const EntryForm = (props) => {
                                 {m.label}
                             </option>
                         ))}
+                        
                     </select>
+                    
                 </div>
             </fieldset>
             <button type="submit"
