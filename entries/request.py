@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models import Entry
+from models import Mood
 
 
 # Function with a single parameter
@@ -11,11 +12,11 @@ def create_entry(new_entry):
 
         db_cursor.execute("""
         INSERT INTO JournalEntries
-            ( concept, entry, date, moodId )
+            ( date, concept, entry, moodId )
         VALUES
             ( ?, ?, ?, ?);
-        """, (new_entry['concept'], new_entry['entry'],
-              new_entry['date'], new_entry['moodId'], ))
+        """, (new_entry['date'], new_entry['concept'],
+              new_entry['entry'], new_entry['moodId'], ))
 
         # The `lastrowid` property on the cursor will return
         # the primary key of the last thing that got added to
@@ -56,13 +57,13 @@ def update_entry(id, new_entry):
         db_cursor.execute("""
         UPDATE JournalEntries
             SET
+                date = ?,
                 concept = ?,
                 entry = ?,
-                date = ?,
                 moodId = ?
         WHERE id = ?
-        """, (new_entry['concept'], new_entry['entry'],
-              new_entry['date'], new_entry['moodId'], id, ))
+        """, (new_entry['date'], new_entry['concept'],
+              new_entry['entry'], new_entry['moodId'], id, ))
 
         # Were any rows affected?
         # Did the client send an `id` that exists?
@@ -89,14 +90,14 @@ def get_all_entries():
         db_cursor.execute("""
         SELECT
             j.id,
+            j.date,
             j.concept,
             j.entry,
-            j.date,
-            m.id,
-            m.label        
+            j.moodId,
+            m.label mood_label        
         FROM JournalEntries j
         JOIN Moods m
-            ON j.moodId = m.id
+            ON m.id = j.moodId
                """)
 
         # Initialize an empty list to hold all entry representations
@@ -117,13 +118,15 @@ def get_all_entries():
             entry = Entry(row['id'], row['date'], row['concept'], row['entry'],
                     row['moodId'])
 
+# Create a Mood Instance from the current row
+            mood = Mood(row['id'], row['mood_label'])
+
+    # Add the dictionary representation of the entries to the mood to the list
+            entry.mood = entry.__dict__
 
     # Add the dictionary representation of the entry to the list
             entries.append(entries.__dict__)
     
-    # Add the dictionary representation of the customer to the list
-          
-
     # Use `json` package to properly serialize list as JSON
     # changes from a dict to a jsonString
     return json.dumps(entries)
