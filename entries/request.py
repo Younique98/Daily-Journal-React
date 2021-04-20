@@ -2,12 +2,13 @@ import sqlite3
 import json
 from models import Entry
 from models import Mood
+from models import Tag
 
 
 # Function with a single parameter
 
 def create_entry(new_entry):
-    with sqlite3.connect("./kennel.db") as conn:
+    with sqlite3.connect("./journal.db") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
@@ -16,7 +17,7 @@ def create_entry(new_entry):
         VALUES
             ( ?, ?, ?, ?);
         """, (new_entry['date'], new_entry['concept'],
-              new_entry['entry'], new_entry['moodId'], ))
+              new_entry['entry'], new_entry['moodId']))
 
         # The `lastrowid` property on the cursor will return
         # the primary key of the last thing that got added to
@@ -94,10 +95,15 @@ def get_all_entries():
             j.concept,
             j.entry,
             j.moodId,
-            m.label mood_label        
+            m.label mood_label,
+            t.name    
         FROM JournalEntries j
         JOIN Moods m
             ON m.id = j.moodId
+        JOIN Entry_Tag e
+            ON e.entry_id = j.id
+        JOIN Tag t
+            ON t.id = e.tag_id
                """)
 
         # Initialize an empty list to hold all entry representations
@@ -121,11 +127,16 @@ def get_all_entries():
 # Create a Mood Instance from the current row
             mood = Mood(row['id'], row['mood_label'])
 
+# tag instance creation
+            tag = Tag(row['id'], row['name'])
+
+# turn tag to a dictionary 
+            entry.tag = tag.__dict__
     # Add the dictionary representation of the entries to the mood to the list
-            entry.mood = entry.__dict__
+            entry.mood = mood.__dict__
 
     # Add the dictionary representation of the entry to the list
-            entries.append(entries.__dict__)
+            entries.append(entry.__dict__)
     
     # Use `json` package to properly serialize list as JSON
     # changes from a dict to a jsonString
@@ -144,7 +155,7 @@ def get_single_entry(id):
             e.date,
             e.concept,
             e.entry,
-            e.mood
+            e.moodId
         FROM JournalEntries e
         WHERE e.id = ?
         """, ( id, ))
@@ -153,7 +164,9 @@ def get_single_entry(id):
         data = db_cursor.fetchone()
 
         # Create an entry instance from the current row
+        # turning into a class object
         entry = Entry(data['id'], data['date'], data['concept'],
-                            data['entry'], data['mood'])
-
+                            data['entry'], data['moodId'])
+## dumps turns it back into a string from an dictionary
+# read right to left from entry.dict to the dumps then to json
         return json.dumps(entry.__dict__)

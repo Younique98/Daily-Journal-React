@@ -12,6 +12,17 @@ CREATE TABLE `Moods` (
     `label`    TEXT NOT NULL
 );
 
+CREATE TABLE `Tag` (
+    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `name`    TEXT NOT NULL
+);
+CREATE TABLE `Entry_Tag` (
+    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `entry_id`    TEXT NOT NULL,
+    `tag_id` TEXT NOT NULL,
+    FOREIGN KEY(`tag_id`) REFERENCES `Tag`(`id`)
+);
+
 SELECT * FROM JournalEntries
 
 INSERT INTO `Moods` VALUES(null, "Happy");
@@ -27,6 +38,14 @@ DELETE FROM 'JournalEntries' WHERE id=1;
 
 ALTER TABLE JournalEntries
 RENAME COLUMN mood TO moodId
+
+INSERT INTO 'Tag' VALUES(null, "research this");
+INSERT INTO 'Tag' VALUES(null, "backlog");
+INSERT INTO 'Tag' VALUES(null, "reminder");
+
+INSERT INTO 'Entry_Tag' VALUES(null, 3, 1);
+INSERT INTO 'Entry_Tag' VALUES(null, 2, 2);
+INSERT INTO 'Entry_Tag' VALUES(null, 4, 3);
 
 SELECT *
 FROM Moods

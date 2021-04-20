@@ -1,6 +1,8 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from entries import get_all_entries, get_single_entry, create_entry, delete_entry, update_entry
+from moods import get_all_moods, get_single_mood
+from tags import get_all_tags, get_single_tag
 import json
 
 
@@ -15,6 +17,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         resource = path_params[1]
 
         # Check if there is a query string parameter
+        ## ? how we start the query
         if "?" in resource:
             # GIVEN: /customers?email=jenna@solis.com
 
@@ -77,6 +80,18 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
+            
+            if resource == "moods":
+                if id is not None:
+                    response = f"{get_single_mood(id)}"
+                else:
+                    response = f"{get_all_moods()}"
+
+            if resource == "tag":
+                if id is not None:
+                    response = f"{get_single_tag(id)}"
+                else:
+                    response = f"{get_all_tags()}"
             
         self.wfile.write(response.encode())
   
